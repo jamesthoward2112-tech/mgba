@@ -1,0 +1,41 @@
+name: PKR mGBA CLI Build
+
+on:
+  push:
+    paths:
+      - '.github/workflows/pkr-cli-build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build gcc g++ pkg-config libsdl2-dev libpng-dev zlib1g-dev libzip-dev
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_QT=OFF \
+            -DBUILD_SDL=ON \
+            -DBUILD_GL=OFF \
+            -DBUILD_GLES2=OFF \
+            -DUSE_FFMPEG=OFF \
+            -DUSE_LZMA=OFF \
+            -DUSE_DISCORD_RPC=OFF
+      - name: Build
+        run: cmake --build build --parallel 2
+      - name: Collect CLI
+        run: |
+          mkdir -p artifact
+          find build -maxdepth 3 -type f -perm -111 -name 'mgba*' -print
+          cp build/mgba artifact/mgba || cp build/sdl/mgba artifact/mgba
+          ldd artifact/mgba || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mgba-linux-cli
+          path: artifact/mgba
+          if-no-files-found: error
