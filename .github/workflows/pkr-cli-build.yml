@@ -14,7 +14,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build gcc g++ pkg-config libsdl2-dev libpng-dev zlib1g-dev libzip-dev
+          sudo apt-get install -y cmake ninja-build gcc g++ pkg-config libsdl2-dev libpng-dev zlib1g-dev
       - name: Configure
         run: |
           cmake -S . -B build -G Ninja \
@@ -25,7 +25,9 @@ jobs:
             -DBUILD_GLES2=OFF \
             -DUSE_FFMPEG=OFF \
             -DUSE_LZMA=OFF \
-            -DUSE_DISCORD_RPC=OFF
+            -DUSE_DISCORD_RPC=OFF \
+            -DUSE_LIBZIP=OFF \
+            -DUSE_MINIZIP=OFF
       - name: Build
         run: cmake --build build --parallel 2
       - name: Collect CLI
