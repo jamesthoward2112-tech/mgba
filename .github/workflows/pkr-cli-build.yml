@@ -30,14 +30,14 @@ jobs:
             -DUSE_MINIZIP=OFF
       - name: Build
         run: cmake --build build --parallel 2
-      - name: Collect CLI
+      - name: Collect CLI and library
         run: |
           mkdir -p artifact
-          find build -maxdepth 3 -type f -perm -111 -name 'mgba*' -print
           cp build/mgba artifact/mgba || cp build/sdl/mgba artifact/mgba
-          ldd artifact/mgba || true
+          find build -type f -name 'libmgba.so*' -print -exec cp -L {} artifact/ \;
+          ls -lah artifact
       - uses: actions/upload-artifact@v4
         with:
           name: mgba-linux-cli
-          path: artifact/mgba
+          path: artifact/
           if-no-files-found: error
