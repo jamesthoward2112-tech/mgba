@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/workflows/pkr-cli-build.yml'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/pkr-cli-build.yml'
 
 jobs:
   build:
@@ -18,7 +21,7 @@ jobs:
       - name: Configure
         run: |
           cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DBUILD_QT=OFF \
             -DBUILD_SDL=ON \
             -DBUILD_GL=OFF \
